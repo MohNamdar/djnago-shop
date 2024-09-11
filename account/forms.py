@@ -16,7 +16,7 @@ class ShopUserCreationForm(UserCreationForm):
             raise forms.ValidationError('شماره تلقن از قبل وجود دارد.')
         if not phone.startswith('09'):
             raise forms.ValidationError('شماره تلفن باید با 09 شروع شود.')
-        if not len(phone):
+        if len(phone) != 11:
             raise forms.ValidationError('شماره تلفن باید 11 رقم باشد.')
 
         return phone
@@ -35,7 +35,7 @@ class ShopUserChangeForm(UserChangeForm):
             raise forms.ValidationError('شماره تلقن از قبل وجود دارد.')
         if not phone.startswith('09'):
             raise forms.ValidationError('شماره تلفن باید با 09 شروع شود.')
-        if not len(phone):
+        if len(phone) != 11:
             raise forms.ValidationError('شماره تلفن باید 11 رقم باشد.')
 
         return phone
