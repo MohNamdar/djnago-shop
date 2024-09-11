@@ -1,0 +1,206 @@
+{% extends 'parent/base.html' %}
+{% load humanize %}
+
+{% block title %}
+    سبد خرید
+{% endblock %}
+
+{% block body %}
+    {% if cart|length %}
+        <section class="flex justify-center bg-white py-4 antialiased dark:bg-gray-900 md:py-8">
+            <div class="max-w-screen-xl px-4 2xl:px-0">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">سبد خرید</h2>
+
+                <div class="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
+                    <div class="flex-none lg:max-w-2xl xl:max-w-4xl">
+                        <div class="space-y-6">
+                            <!-- Product -->
+                            {% for item in cart %}
+                                <div data-item-id="{{ item.product.id }}"
+                                     class="product-card  rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
+                                    <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
+
+                                        <a href="{{ item.product.get_absolute_url }}" class="shrink-0 md:order-1">
+                                            <img class="h-20 w-20 rounded-lg"
+                                                 src="{{ item.product.cover.url }}"
+                                                 alt="imac image"/>
+                                        </a>
+
+                                        <div class="flex items-center justify-between md:order-3 md:justify-end">
+                                            <div class="flex items-center">
+                                                <button type="button"
+                                                        class="decrement-button inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
+                                                    -
+                                                </button>
+                                                <input type="text"
+                                                       class="cart-counter-input w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white"
+                                                       value="{{ item.quantity }}" required/>
+                                                <button type="button"
+                                                        class="increment-button inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
+                                                    +
+                                                </button>
+                                            </div>
+                                            <div class="text-end md:order-4 md:w-32">
+                                                <p class="text-left font-bold text-gray-900 dark:text-white">{{ item.price|intcomma:False }}
+                                                    تومان</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
+                                            <a href="{{ item.product.get_absolute_url }}"
+                                               class="text-base font-medium text-gray-900 hover:underline dark:text-white">{{ item.product.name }}</a>
+
+                                            <div class="flex items-center justify-end gap-4">
+                                                <button type="button"
+                                                        class="remove-item-button inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500">
+                                                    <svg class="me-1.5 h-5 w-5" aria-hidden="true"
+                                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                         fill="none"
+                                                         viewBox="0 0 24 24">
+                                                        <path stroke="currentColor" stroke-linecap="round"
+                                                              stroke-linejoin="round" stroke-width="2"
+                                                              d="M6 18 17.94 6M18 18 6.06 6"/>
+                                                    </svg>
+                                                    حذف
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Order Summery Sidebar -->
+                    <div class="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full">
+                        <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
+                            <p class="text-xl font-semibold text-gray-900 dark:text-white">خلاصه سفارش</p>
+
+                            <div class="space-y-4">
+                                <div class="space-y-2">
+                                    <dl class="flex items-center justify-between gap-16">
+                                        <dt class="text-base font-normal text-gray-500 dark:text-gray-400">قیمت اصلی
+                                        </dt>
+                                        <dd class="text-base {% if cart.get_total_off > 0 %}line-through {% endif %}font-medium text-gray-900 dark:text-white">{{ cart.get_total_price|intcomma:False }}
+                                            تومان
+                                        </dd>
+                                    </dl>
+
+                                    {% if cart.get_total_off > 0 %}
+                                        <dl class="flex items-center justify-between gap-4">
+                                            <dt class="text-base font-normal text-gray-500 dark:text-gray-400">تخفیف</dt>
+                                            <dd class="text-base font-medium text-green-600">{{ cart.get_total_off|intcomma:False }} -</dd>
+                                        </dl>
+                                    {% endif %}
+
+                                    <dl class="flex items-center justify-between gap-4">
+                                        <dt class="text-base font-normal text-gray-500 dark:text-gray-400">هزینه ارسال
+                                        </dt>
+                                        <dd class="text-base font-medium text-gray-900 dark:text-white">{{ cart.get_post_price|intcomma:False }}
+                                            تومان
+                                        </dd>
+                                    </dl>
+
+                                </div>
+
+                                <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
+                                    <dt class="text-base font-bold text-gray-900 dark:text-white">هزینه نهایی</dt>
+                                    <dd class="text-base font-bold text-gray-900 dark:text-white">{{ cart.get_total_price|add:cart.get_post_price|intcomma:False }}
+                                        تومان
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+
+                        <button type="button"
+                                class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                            پرداخت نهایی
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <script>
+            $(document).ready(function () {
+                $('.increment-button').click(function () {
+                    updateQuantity($(this), $(this).closest('.product-card').data('item-id'), 'increase');
+                });
+
+                $('.decrement-button').click(function () {
+                    updateQuantity($(this), $(this).closest('.product-card').data('item-id'), 'decrease');
+                });
+
+                $('.remove-item-button').click(function () {
+                    var itemId = $(this).closest('.product-card').data('item-id');
+                    var item_card = $(this).closest('.product-card');
+                    $.ajax({
+                        type: 'POST',
+                        url: "{% url 'cart:remove_product' %}",
+                        data: {
+                            'product_id': itemId,
+                            'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        },
+                        success: function (data) {
+                            if (data.error) {
+                                alert(data.error)
+                            } else {
+                                item_card.remove();
+                                $(`.cart-item-card[id='${itemId}']`).remove();
+                                var cart_icon_badge = $('#cart-item-count');
+                                cart_icon_badge.text(data.item_count);
+                                $('#total_price').text(data.total_price + ' تومان');
+
+                                // Check if there are no more product cards
+                                if ($('.product-card').length === 0) {
+                                    // Replace cart content with the empty cart template
+                                    renderEmptyCart();
+                                }
+                            }
+
+                        }
+                    });
+
+                });
+
+                function renderEmptyCart() {
+                    $('section').html('{% include 'cart/empy_cart.html' %}');
+                }
+
+                function updateQuantity(button, itemId, action) {
+                    $.ajax({
+                        type: 'POST',
+                        url: "{% url 'cart:update_quantity' %}",
+                        data: {
+                            'product_id': itemId,
+                            'action': action,
+                            'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        },
+                        success: function (data) {
+                            if (data.error) {
+                                alert(data.error)
+                            } else {
+                                var quantity_input = button.closest('.product-card').find('.cart-counter-input');
+                                var cart_icon_badge = $('#cart-item-count');
+                                quantity_input.val(data.new_quantity);
+                                cart_icon_badge.text(data.item_count);
+                                if (cart_icon_badge.is(":hidden")) {
+                                    cart_icon_badge.show();
+                                    $('#total_price').text(data.total_price + ' تومان');
+                                }
+                            }
+
+                        }
+                    });
+                }
+            });
+
+
+        </script>
+        <!-- Empty Cart -->
+    {% else %}
+     {% include 'cart/empy_cart.html' %}
+    {% endif %}
+{% endblock %}
